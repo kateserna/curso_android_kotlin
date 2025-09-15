@@ -79,8 +79,7 @@ fun TaskCard(message: String, congratulation: String, modifier: Modifier = Modif
         )
         TaskText(
             message = message,
-            congratulation = congratulation,
-
+            congratulation = congratulation
         )
     }
 }
