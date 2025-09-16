@@ -3,7 +3,6 @@ package com.example.cuadrantecompose
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -29,14 +27,13 @@ import com.example.cuadrantecompose.ui.theme.CuadranteComposeTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
             CuadranteComposeTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                     ) {
-
+                    QuadrantApp()
                 }
             }
         }
@@ -44,33 +41,9 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun InfoCard(title: String, message: String, background: Color ,modifier: Modifier = Modifier) {
-    Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(background)
-            .padding(16.dp)
-    ){
-        Text(
-            text = title,
-            fontWeight = FontWeight.Bold,
-            modifier = modifier.padding(bottom = 16.dp)
-        )
-        Text(
-            text = message,
-            textAlign = TextAlign.Justify,
-        )
-    }
-}
-
-@Composable
 fun QuadrantApp() {
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Row(
-            modifier = Modifier.weight(1f)
-        ) {
+    Column(Modifier.fillMaxWidth()) {
+        Row(Modifier.weight(1f)) {
             InfoCard(
                 title = stringResource(R.string.title1),
                 message = stringResource(R.string.message1),
@@ -84,12 +57,48 @@ fun QuadrantApp() {
                 modifier = Modifier.weight(1f)
             )
         }
+        Row(Modifier.weight(1f)) {
+            InfoCard(
+                title = stringResource(R.string.tittle3),
+                message = stringResource(R.string.message3),
+                background = Color(0xFFB69DF8),
+                modifier = Modifier.weight(1f)
+            )
+            InfoCard(
+                title = stringResource(R.string.tittle4),
+                message = stringResource(R.string.message4),
+                background = Color(0xFFF6EDFF),
+                modifier = Modifier.weight(1f)
+            )
+        }
+    }
+}
+
+@Composable
+fun InfoCard(title: String, message: String, background: Color, modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(background)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        Text(
+            text = title,
+            modifier = Modifier.padding(bottom = 16.dp),
+            fontWeight = FontWeight.Bold
+        )
+        Text(
+            text = message,
+            textAlign = TextAlign.Justify
+        )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun QuadrantAppPreview() {
     CuadranteComposeTheme {
         QuadrantApp()
     }
