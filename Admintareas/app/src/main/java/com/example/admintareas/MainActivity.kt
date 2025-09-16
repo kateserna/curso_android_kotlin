@@ -34,10 +34,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    TaskCard(
-                        stringResource(R.string.tasks_completed),
-                        stringResource(R.string.nice_work)
-                    )
+                    TaskCard()
                 }
             }
         }
@@ -66,7 +63,7 @@ fun TaskText(message: String, congratulation: String, modifier: Modifier = Modif
 }
 
 @Composable
-fun TaskCard(message: String, congratulation: String, modifier: Modifier = Modifier){
+fun TaskCard(){
     val image = painterResource(R.drawable.ic_task_completed)
     Column(
         verticalArrangement = Arrangement.Center,
@@ -78,8 +75,8 @@ fun TaskCard(message: String, congratulation: String, modifier: Modifier = Modif
             contentDescription = null
         )
         TaskText(
-            message = message,
-            congratulation = congratulation
+            message = stringResource(R.string.tasks_completed),
+            congratulation = stringResource(R.string.nice_work)
         )
     }
 }
@@ -88,9 +85,6 @@ fun TaskCard(message: String, congratulation: String, modifier: Modifier = Modif
 @Composable
 fun GreetingPreview() {
     AdminTareasTheme {
-        TaskCard(
-            message = stringResource(R.string.tasks_completed),
-            congratulation = stringResource(R.string.nice_work)
-        )
+        TaskCard()
     }
 }
