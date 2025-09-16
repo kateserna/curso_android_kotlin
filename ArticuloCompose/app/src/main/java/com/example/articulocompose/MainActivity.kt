@@ -5,7 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -34,7 +33,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    GreetingImage(
+                    ArticleApp(
                         title = stringResource(R.string.title_text),
                         parag1 = stringResource(R.string.parag1_text),
                         parag2 = stringResource(R.string.parag2_text)
@@ -46,9 +45,8 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun GreetingText(title: String, parag1: String, parag2: String, modifier: Modifier = Modifier) {
+fun ArticleText(title: String, parag1: String, parag2: String, modifier: Modifier = Modifier) {
     Column(
-        verticalArrangement = Arrangement.Center,
         modifier = modifier
     ) {
         Text(
@@ -70,7 +68,7 @@ fun GreetingText(title: String, parag1: String, parag2: String, modifier: Modifi
 }
 
 @Composable
-fun GreetingImage(title: String, parag1: String, parag2: String, modifier: Modifier = Modifier){
+fun ArticleApp(title: String, parag1: String, parag2: String, modifier: Modifier = Modifier){
     val image = painterResource(R.drawable.bg_compose_background)
     Column(modifier) {
         Image(
@@ -79,7 +77,7 @@ fun GreetingImage(title: String, parag1: String, parag2: String, modifier: Modif
             contentScale = ContentScale.FillWidth,
 
         )
-        GreetingText(
+        ArticleText(
             title = title,
             parag1 = parag1,
             parag2 = parag2,
@@ -94,7 +92,7 @@ fun GreetingImage(title: String, parag1: String, parag2: String, modifier: Modif
 @Composable
 fun ArticuloPreview() {
     ArticuloComposeTheme {
-        GreetingImage(
+        ArticleApp(
             title = stringResource(R.string.title_text),
             parag1 = stringResource(R.string.parag1_text),
             parag2 = stringResource(R.string.parag2_text),
