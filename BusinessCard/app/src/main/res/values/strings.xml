@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Business Card</string>
+    <string name="name">Katerine Serna González</string>
+    <string name="profession">Android Developer, Full Stack Developer</string>
 </resources>
