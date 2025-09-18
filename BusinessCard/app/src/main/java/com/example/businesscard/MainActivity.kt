@@ -42,6 +42,7 @@ class MainActivity : ComponentActivity() {
             BusinessCardTheme {
                 Surface(modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background) {
+                    BusinessCard()
                 }
             }
         }
@@ -52,7 +53,9 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun NameCard(name: String, profession: String, color: Color, modifier: Modifier = Modifier) {
     Column(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(top = 48.dp, bottom = 24.dp), // Añadido padding superior e inferior
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -60,21 +63,21 @@ fun NameCard(name: String, profession: String, color: Color, modifier: Modifier 
         Image(
             painter = imageLogo,
             contentDescription = "logo Android",
-            modifier = modifier
-                .clip(CircleShape) //.clip(RoundedCornerShape(16.dp)) - redondo
+            modifier = Modifier
                 .size(100.dp)
-                .background(Color(0xFF000000))
+                .clip(CircleShape) //.clip(RoundedCornerShape(16.dp)) - redondo
+                .background(Color(0xFF073042))
         )
         Text(
             text = name,
             fontSize = 35.sp,
-            modifier = modifier
+            modifier = Modifier.padding(top = 16.dp)
         )
         Text(
             text = profession,
             fontWeight = FontWeight.Bold,
             color = color,
-            modifier = modifier
+            modifier = Modifier.padding(top = 8.dp)
         )
     }
 }
@@ -109,30 +112,42 @@ fun InfoContact() {
             )
         }
         //Fila 2: compartir
-        Row(Modifier.weight(1f)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .padding(horizontal = 24.dp),
+            verticalAlignment = Alignment.CenterVertically
             ) {
             Icon(
-                Icons.TwoTone.Share,
+                imageVector = Icons.TwoTone.Share,
                 tint = Color(0xFF3A0272),
                 contentDescription = "share",
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.padding(end = 16.dp)
             )
             Text(
                 text = "@kateserna",
-                textAlign = TextAlign.Justify,
+                textAlign = TextAlign.Start,
                 modifier = Modifier.weight(1f)
             )
         }
-        Row(Modifier.weight(1f)
+        //Fila 3: Email
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .padding(horizontal = 24.dp),
+            verticalAlignment = Alignment.CenterVertically
             ) {
             Icon(
-                Icons.TwoTone.Email,
+                imageVector = Icons.TwoTone.Email,
                 tint = Color(0xFF3A0272),
                 contentDescription = "email",
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.padding(end = 16.dp)
             )
             Text(
                 text = "kserna.g@gmail.com",
+                textAlign = TextAlign.Start,
                 modifier = Modifier.weight(1f)
             )
         }
@@ -159,6 +174,6 @@ fun BusinessCard() {
 @Composable
 fun BusinessCardPreview() {
     BusinessCardTheme {
-        InfoContact()
+        BusinessCard()
     }
 }
