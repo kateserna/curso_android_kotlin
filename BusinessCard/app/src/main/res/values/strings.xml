@@ -2,4 +2,10 @@
     <string name="app_name">Business Card</string>
     <string name="name">Katerine Serna González</string>
     <string name="profession">Android Developer, Full Stack Developer</string>
+    <string name="icon_row1">phone icon</string>
+    <string name="phone_number">+57 3164521698</string>
+    <string name="icon_row2">share icon</string>
+    <string name="description_row2">\@kateserna</string>
+    <string name="icon_row3">email icon</string>
+    <string name="description_row3">kserna.g@gmail.com</string>
 </resources>
