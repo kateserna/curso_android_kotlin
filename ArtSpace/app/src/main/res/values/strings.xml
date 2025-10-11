@@ -1,3 +1,20 @@
 <resources>
     <string name="app_name">ArtSpace</string>
+    <string name="tittle_app">Art Space</string>
+    <string name="content_image1">Gato</string>
+    <string name="description_image1">Imagen de gato</string>
+    <string name="author_image1">Maria Kalcheva en Pixabaay</string>
+    <string name="age_image1">2020</string>
+    <string name="content_image2">Pavo real</string>
+    <string name="description_image2">Pavo real hermosa</string>
+    <string name="author_image2">Alexa en Pixabaay</string>
+    <string name="age_image2">2018</string>
+    <string name="content_image3">Montañas de otoño</string>
+    <string name="description_image3">Las montañas Dolomitas, Italia</string>
+    <string name="author_image3">Kordula Vahle en Pixabaay</string>
+    <string name="age_image3">2017</string>
+    <string name="content_image4">Atardecer</string>
+    <string name="description_image4">Puesta de sol, mar y océano</string>
+    <string name="author_image4">Gonzalo de Martorell en Pixabaay</string>
+    <string name="age_image4">2023</string>
 </resources>
