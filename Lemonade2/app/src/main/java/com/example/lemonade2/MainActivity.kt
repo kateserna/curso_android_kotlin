@@ -101,7 +101,7 @@ fun ImageChangeWithClick(modifier: Modifier = Modifier) {
                 textResourceId = R.string.screen2,
                 imageClick = {
                     squeezeCount--
-                    if (squeezeCount == 0) {
+                          if (squeezeCount == 0) {
                         currentStep = 3
                     }
                 }
