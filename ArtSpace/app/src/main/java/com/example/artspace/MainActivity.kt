@@ -8,6 +8,8 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -67,47 +69,100 @@ fun ArtSpaceLayout(
 
     //función para cambiar de obra a la siguiente
     val onNextClick = {
-        currentArtPage = if (currentArtPage < totalArtPieces) {
-            currentArtPage + 1
-        } else {
-            1
+        if (currentArtPage < totalArtPieces) {
+            currentArtPage = currentArtPage + 1
         }
     }
 
     //función para cambiar de obra a la anterior
     val onPreviousClick = {
-        currentArtPage = if (currentArtPage > 1) {
-            currentArtPage -1
-        } else {
-            totalArtPieces
+        if (currentArtPage > 1) {
+            currentArtPage = currentArtPage -1
         }
     }
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 40.dp)
-            .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = stringResource(R.string.tittle_app),
-            fontSize = 40.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color(1, 29, 63, 255),
-            modifier = Modifier.padding(16.dp)
-        )
-        //Pasamos el estado actual de la página al componente que muestra la imagen y la descripción
-        ImageAndDescriptionChange(currentArtPage = currentArtPage)
-        //Pasamos las funciones de clic al componente de botones
-        PaginationButton(
-            onNextClick = onNextClick,
-            onPreviousClick = onPreviousClick,
-            //se pasan los estados de paginacion
-            currentPage = currentArtPage,
-            totalPages = totalArtPieces
-        )
+    // BoxWithConstraints nos da el ancho y alto máximo disponible (constraints).
+    BoxWithConstraints(modifier = modifier.fillMaxSize()) {
+        // Si el ancho es mayor a 600dp, consideramos que es una pantalla grande.
+        val isWideScreen = this.maxWidth > 600.dp
+
+        //Decidimos que layout mostrar basado en el ancho de la pantalla
+        if (isWideScreen) {
+            //--- LAYOUT PARA TABLETS (PANTALLA ANCHA) ---
+            // Usa un Box para posicionar elementos libremente.
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 40.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                // El Título, ocupa su propio espacio en la parte superior
+                Text(
+                    text = stringResource(R.string.tittle_app),
+                    fontSize = 40.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(1, 29, 63, 255),
+                    modifier = Modifier.padding(vertical = 24.dp)
+                )
+                // La imagen y su descripción, centradas.
+                //CONTENIDO PRINCIPAL: Un Box que ocupa el espacio restante.
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f) //Ocupa todo el espaacio vertical disponible
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .align(Alignment.Center) //este colum se centra dentro del box
+                            .verticalScroll(rememberScrollState()),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        ImageAndDescriptionChange(currentArtPage = currentArtPage)
+                    }
+                    // El botón "Previous", anclado abajo a la izquierda.
+                    ActionButton(
+                        action = "Previous",
+                        onClick = onPreviousClick,
+                        enabled = currentArtPage > 1,
+                        modifier = Modifier.align(Alignment.BottomStart)
+                    )
+                    // El botón "Next", anclado abajo a la derecha.
+                    ActionButton(
+                        action = "Next",
+                        onClick = onNextClick,
+                        enabled = currentArtPage < totalArtPieces,
+                        modifier = Modifier.align(Alignment.BottomEnd)
+                    )
+                }
+            }
+        } else {
+            // --- LAYOUT PARA TELÉFONOS (PANTALLA ESTRECHA) ---
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 40.dp)
+                    .verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                // NO usamos Arrangement.Center para evitar conflictos.
+                // Dejamos que el contenido fluya desde arriba.
+                verticalArrangement = Arrangement.Top
+            ) {
+                Text(
+                    text = stringResource(R.string.tittle_app),
+                    fontSize = 40.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(1, 29, 63, 255),
+                    modifier = Modifier.padding(16.dp)
+                )
+                ImageAndDescriptionChange(currentArtPage = currentArtPage)
+                PaginationButton(
+                    onNextClick = onNextClick,
+                    onPreviousClick = onPreviousClick,
+                    currentPage = currentArtPage,
+                    totalPages = totalArtPieces
+                )
+            }
+        }
     }
 }
 
@@ -156,9 +211,10 @@ fun ArtImageAndDescription(
     yearResourceId: Int,
     modifier: Modifier = Modifier
 ) {
+    // El modifier con el 'weight' se aplica AHORA a la Column principal.
     Column {
         Surface(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth(),
             shape = RoundedCornerShape(4.dp),
             color = Color.White, //color del marco de la imagen
@@ -169,7 +225,7 @@ fun ArtImageAndDescription(
             Image(
                 painter = painterResource(imageResourceId),
                 contentDescription = stringResource(contentDescriptionResourceId),
-                // 4. Usamos padding para crear el espacio en blanco del marco.
+                // Usamos padding para crear el espacio en blanco del marco.
                 modifier = Modifier.padding(24.dp)
             )
         }
