@@ -146,7 +146,7 @@ fun DogItem(
 
 
     Card(modifier = modifier) {
-        //Animacion de expandir para verse el hobby
+        //Animacion de resorte para expandir para verse el hobby
         Column(modifier = Modifier
             .animateContentSize(animationSpec = spring(
                 dampingRatio = Spring.DampingRatioNoBouncy,
