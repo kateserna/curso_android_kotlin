@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,12 +33,29 @@ import com.example.heroapp.model.Hero
 import com.example.heroapp.model.HeroesRepository.heroes
 import com.example.heroapp.ui.theme.HeroAppTheme
 
+/**
+ * Muestra una lista de héroes en una LazyColumn.
+ * Este Composable está diseñado para ser reutilizable y desacoplado de la estructura principal
+ * de la pantalla (como un Scaffold).
+ *
+ * @param heroes La lista de objetos [Hero] para mostrar.
+ * @param modifier El modificador que se aplicará a la LazyColumn.
+ * @param contentPadding Padding que se aplicará al contenido de la LazyColumn. Este es el
+ * mecanismo clave para que un componente padre (como un Scaffold) pueda insertar padding
+ * para evitar que el contenido se solape con las barras del sistema (ej. TopAppBar).
+ * Por defecto es 0.dp.
+ */
 @Composable
 fun HeroListItem(
     heroes: List<Hero>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(0.dp)
+
 ) {
-    LazyColumn {
+    // LazyColumn es el componente eficiente para mostrar listas.
+    // Pasamos el contentPadding recibido directamente a la LazyColumn para que se aplique
+    // al área de contenido, desplazando los items según sea necesario.
+    LazyColumn(contentPadding = contentPadding) {
         items(items = heroes) { hero ->
             HeroItem(
                 hero = hero,
@@ -49,6 +67,20 @@ fun HeroListItem(
     }
 }
 
+/**
+ * Muestra un único elemento de la lista (un Card de héroe).
+ *
+ * @param hero El objeto [Hero] a mostrar.
+ * @param modifier El modificador que se aplicará al Card.
+ *
+ * Muestra la información textual de un héroe (nombre y descripción).
+ * @param hero.nameRes ID del recurso de string para el nombre.
+ * @param hero.descriptionRes ID del recurso de string para la descripción.
+ *
+ * Muestra la imagen de un héroe.
+ * @param imageRes ID del recurso de imagen para la imagen.
+ * @param modifier Modificador para la columna que contiene los textos.
+ */
 @Composable
 fun HeroItem(
     hero: Hero,
@@ -56,7 +88,7 @@ fun HeroItem(
 ) {
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        //shape = MaterialTheme.shapes.medium,
+        //shape = MaterialTheme.shapes.medium, no es necesario el card por defecto aplica un shape medium del theme
         modifier = modifier
     ) {
         Row(
