@@ -1,6 +1,15 @@
 package com.example.heroapp
 
 import android.content.res.Configuration
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.core.Spring.DampingRatioLowBouncy
+import androidx.compose.animation.core.Spring.StiffnessVeryLow
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,13 +22,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,41 +55,80 @@ import com.example.heroapp.ui.theme.HeroAppTheme
  * para evitar que el contenido se solape con las barras del sistema (ej. TopAppBar).
  * Por defecto es 0.dp.
  */
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun HeroListItem(
     heroes: List<Hero>,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
-
 ) {
-    // LazyColumn es el componente eficiente para mostrar listas.
-    // Pasamos el contentPadding recibido directamente a la LazyColumn para que se aplique
-    // al área de contenido, desplazando los items según sea necesario.
-    LazyColumn(contentPadding = contentPadding) {
-        items(items = heroes) { hero ->
-            HeroItem(
-                hero = hero,
-                modifier = Modifier.padding(
-                    vertical = dimensionResource(R.dimen.padding_small),
-                    horizontal = dimensionResource(R.dimen.padding_medium))
-            )
+    // 1. CREACIÓN DEL ESTADO DE TRANSICIÓN QUE COMIENZA EN UN ESTADO NO VISIBLE
+    val visibleState = remember {
+        MutableTransitionState(false).apply {
+            // Iniciar la animación inmediatamente
+            targetState = true
+        }
+    }
+
+    // 2. ANIMACIÓN DE VISIBILIDAD PARA TODA LA LISTA
+    AnimatedVisibility(
+        visibleState = visibleState,
+        //Define como aparece el contenido cuando es visible.
+        enter = fadeIn( // fadeIn: Suave efecto de fundido
+            animationSpec = spring(dampingRatio = DampingRatioLowBouncy) //Efecto de rebote suave y control de "elasticidad"
+        ),
+        //Define como desaparece el contenido cuando no es visible.
+        exit = fadeOut(),
+        modifier = modifier
+    ) {
+        // El contenido que se animará (la LazyColumn)
+        // LazyColumn es el componente eficiente para mostrar listas.
+        // Pasamos el contentPadding recibido directamente a la LazyColumn para que se aplique
+        // al área de contenido, desplazando los items según sea necesario.
+        LazyColumn(contentPadding = contentPadding) {
+            // Se usa "itemsIndexed" para acceder al "index" de cada elemento para la animacion escalonada.
+            // itemsIndexed nos proporciona dos variables en su lambda: el index y el hero (objeto de datos).
+            // Necesitamos el index para poder crear el efecto escalonado.
+            itemsIndexed(items = heroes) { index, hero ->
+                HeroItem(
+                    hero = hero,
+                    // Aplica el padding primero, y LUEGO, encadena la animación al Modifier.
+                    modifier = Modifier
+                        .padding(
+                        vertical = dimensionResource(R.dimen.padding_small),
+                        horizontal = dimensionResource(R.dimen.padding_medium)
+                        )
+                        // Permite animar la entrada y salida de cada elemento individualmente a medida
+                        // que se desplaza y se hace visible en la pantalla
+                        .animateEnterExit(
+                            //Se define la animación de entrada y salida.
+                            // Define que cada HeroItem entrará deslizándose verticalmente.
+                            enter = slideInVertically(
+                                animationSpec = spring(
+                                    stiffness = StiffnessVeryLow,
+                                    dampingRatio = DampingRatioLowBouncy
+                                ),
+                                //Cálculo del retraso escalonado para cada elemento.
+                                // Usa el "index" proporcionado por "itemsIndexed" para la animacion.
+                                /* initialOffsetY: Elparámetro de slideInVertically define la posición vertical inicial desde la cual comenzará a animarse el elemento.
+                                 *{ it -> ... }: it representa la altura total del Composable que se está animando. Compose lo calcula por ti.
+                                 * * (index + 1): Aquí está la clave. Multiplicamos la altura por el índice del elemento.
+                                 */
+                                initialOffsetY = { it * (index + 1) } // staggered entrance
+                            )
+                        )
+                )
+            }
         }
     }
 }
 
 /**
- * Muestra un único elemento de la lista (un Card de héroe).
+ * Muestra un único elemento de la lista (un Card de héroe), conteniendo tanto la información
+ * textual como la imagen.
  *
- * @param hero El objeto [Hero] a mostrar.
- * @param modifier El modificador que se aplicará al Card.
- *
- * Muestra la información textual de un héroe (nombre y descripción).
- * @param hero.nameRes ID del recurso de string para el nombre.
- * @param hero.descriptionRes ID del recurso de string para la descripción.
- *
- * Muestra la imagen de un héroe.
- * @param imageRes ID del recurso de imagen para la imagen.
- * @param modifier Modificador para la columna que contiene los textos.
+ * @param hero El objeto [Hero] completo que contiene todos los datos a mostrar (nombre, descripción e imagen).
+ * @param modifier El modificador que se aplicará al Card contenedor.
  */
 @Composable
 fun HeroItem(
