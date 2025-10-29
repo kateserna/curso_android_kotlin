@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import com.example.unscramble.data.allWords
+import kotlinx.coroutines.flow.update
 
 
 class GameViewModel: ViewModel() {
@@ -45,7 +46,19 @@ class GameViewModel: ViewModel() {
         userGuess = guessedWord
     }
 
+    // Verifica si la palabra ingresada por el usuario es correcta.
+    fun checkUserGuess() {
 
+        if (userGuess.equals(currentWord, ignoreCase = true)) {
+        } else {
+            // La respuesta del usuario es incorrecta; mostrar un error
+            _uiState.update { currentState ->
+                currentState.copy(isGuessedWordWrong = true)
+            }
+        }
+        // Restablecer la suposición del usuario
+        updateUserGuess("")
+    }
 
 
     // Metodo auxiliar para desordenar la palabra actual
