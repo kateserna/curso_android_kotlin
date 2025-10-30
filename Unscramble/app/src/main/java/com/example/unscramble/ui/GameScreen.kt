@@ -121,8 +121,13 @@ fun GameScreen(
                 )
             }
         }
-
         GameStatus(score = gameUiState.score, modifier = Modifier.padding(20.dp))
+    }
+    if (gameUiState.isGameOver) {
+        FinalScoreDialog(
+            score = gameUiState.score,
+            onPlayAgain = { gameViewModel.resetGame() }
+        )
     }
 }
 
@@ -222,9 +227,8 @@ private fun FinalScoreDialog(
 
     AlertDialog(
         onDismissRequest = {
-            // Dismiss the dialog when the user clicks outside the dialog or on the back
-            // button. If you want to disable that functionality, simply use an empty
-            // onCloseRequest.
+            // Cierra el diálogo cuando el usuario haga clic fuera del diálogo o en el botón Atrás.
+            // Si deseas deshabilitar esta funcionalidad, simplemente usa una solicitud onDismiss vacía.
         },
         title = { Text(text = stringResource(R.string.congratulations)) },
         text = { Text(text = stringResource(R.string.you_scored, score)) },
