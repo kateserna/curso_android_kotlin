@@ -84,6 +84,8 @@ fun CupcakeAppBar(
 @Composable
 fun CupcakeApp(
     viewModel: OrderViewModel = viewModel(),
+    // Instancia de NavHostController para la navegación, es el responsable de navegar entre rutas y
+    // mantener el historial de navegación.
     navController: NavHostController = rememberNavController()
 ) {
 
@@ -96,43 +98,116 @@ fun CupcakeApp(
         }
     ) { innerPadding ->
         val uiState by viewModel.uiState.collectAsState()
+/*
+ * NavHost es el componente central para la navegación en Compose. Actúa como un contenedor
+ * que muestra el destino de navegación actual. Configura el grafo de navegación de la aplicación.
+ * Define cada una de las "rutas" (pantallas) que el usuario puede visitar y asocia un Composable a
+ * cada una de ellas.
+ *
+ * - navController: La instancia de NavHostController que gestiona la pila de navegación
+ *   y las transiciones entre pantallas. Controla a qué pantalla ir, cómo volver atrás y mantiene
+ *   el historial de navegación.
+ * - startDestination: La ruta del destino que se muestra inicialmente al lanzar la app.
+ *   En este caso, es la pantalla "Start". Especifica cuál de todas las pantallas definidas es la
+ *   primera que se debe mostrar.
+ * - modifier: Se aplica un padding interno (innerPadding) proporcionado por el Scaffold
+ *   para asegurar que el contenido no se solape con la barra superior (TopAppBar).
+ * - composable(route = ...): Cada bloque composable define una pantalla. La route es un String que
+ *   actúa como su identificador único. Cuando se navega a esa ruta, el contenido dentro de este
+ *   bloque se muestra en el NavHost.
+ */
         NavHost(
             navController = navController,
             startDestination = CupcakeScreen.Start.name,
             modifier = Modifier.padding(innerPadding)
         ) {
+            /*
+             * Define la pantalla de inicio de la orden.
+             * - route: El identificador único para esta pantalla, obtenido del enum CupcakeScreen.
+             * - composable: El contenido de la pantalla que se va a renderizar.
+             */
             composable(route = CupcakeScreen.Start.name) {
                 StartOrderScreen(
                     quantityOptions = DataSource.quantityOptions,
+                    onNextButtonClicked = {
+                        viewModel.setQuantity(it)
+                        navController.navigate(CupcakeScreen.Flavor.name)
+                    },
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(dimensionResource(R.dimen.padding_medium)),
                 )
             }
+            /*
+             * Define la pantalla para seleccionar el sabor de los cupcakes.
+             * Se obtienen los sabores desde DataSource y se convierten a String.
+             * La selección actualiza el ViewModel.
+             */
             composable(route = CupcakeScreen.Flavor.name) {
                 val context = LocalContext.current
                 SelectOptionScreen(
                     subtotal = uiState.price,
+                    onNextButtonClicked = { navController.navigate(CupcakeScreen.Pickup.name)},
+                    onCancelButtonClicked = {
+                        cancelOrderAndNavigateToStart(viewModel, navController)
+                    },
                     options = DataSource.flavors.map { id -> context.resources.getString(id) },
                     onSelectionChanged = { viewModel.setFlavor(it)},
                     modifier = Modifier.fillMaxHeight()
                 )
             }
+            /*
+             * Define la pantalla para seleccionar la fecha de recogida.
+             * Las opciones de fecha se obtienen del estado de la interfaz de usuario (uiState).
+             * La selección actualiza el ViewModel.
+             */
             composable(route = CupcakeScreen.Pickup.name) {
                 SelectOptionScreen(
                     subtotal = uiState.price,
+                    onNextButtonClicked = { navController.navigate(CupcakeScreen.Summary.name)},
+                    onCancelButtonClicked = {
+                        cancelOrderAndNavigateToStart(viewModel, navController)
+                    },
                     options = uiState.pickupOptions,
-                    onSelectionChanged = { viewModel.setFlavor(it)},
+                    onSelectionChanged = { viewModel.setDate(it)},
                     modifier = Modifier.fillMaxHeight()
                 )
             }
+            /*
+             * Define la pantalla de resumen del pedido.
+             * Muestra toda la información del pedido contenida en uiState.
+             */
             composable(route = CupcakeScreen.Summary.name) {
                 OrderSummaryScreen(
                     orderUiState = uiState,
+                    onCancelButtonClicked = {
+                        cancelOrderAndNavigateToStart(viewModel, navController)
+                    },
+                    onSendButtonClicked = {
+                        subject: String, summary: String ->
+                    },
                     modifier = Modifier.fillMaxHeight()
                 )
             }
 
         }
     }
+}
+
+// Metodo para cancelar la orden y restablecer la pantalla inicial
+/*
+* El método popBackStack() tiene dos parámetros obligatorios.
+*  - route: Es la cadena que representa la ruta del destino al que deseas volver.
+*  - inclusive: Es un valor booleano que, si es verdadero, también muestra (quita) la ruta
+*    especificada. Si es falso, popBackStack() quitará todos los destinos que se encuentren
+*    sobre el de inicio (pero no este último), lo que hará que sea la pantalla superior visible
+*    para el usuario.
+*/
+private fun cancelOrderAndNavigateToStart(
+    viewModel: OrderViewModel,
+    navController: NavHostController
+) {
+    viewModel.resetOrder()
+    navController.popBackStack(CupcakeScreen.Start.name, inclusive = false)
+
 }
