@@ -15,6 +15,8 @@
  */
 package com.example.cupcake
 
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -178,6 +180,7 @@ fun CupcakeApp(
              * Muestra toda la información del pedido contenida en uiState.
              */
             composable(route = CupcakeScreen.Summary.name) {
+                val context = LocalContext.current
                 OrderSummaryScreen(
                     orderUiState = uiState,
                     onCancelButtonClicked = {
@@ -185,6 +188,7 @@ fun CupcakeApp(
                     },
                     onSendButtonClicked = {
                         subject: String, summary: String ->
+                        shareOrder(context, subject = subject, summary = summary)
                     },
                     modifier = Modifier.fillMaxHeight()
                 )
@@ -192,6 +196,43 @@ fun CupcakeApp(
 
         }
     }
+}
+
+// Crea un Intent para compartir el resumen de la orden de cupcakes a otra app.
+/**
+ * Crea un Intent implícito para compartir los detalles del pedido con otra aplicación.
+ *
+ * Esta función construye un Intent con la acción`ACTION_SEND`, que indica que se desea enviar
+ * datos. Se especifica que el tipo de datos es texto plano (`"text/plain"`). Luego, se adjuntan
+ * el asunto y el cuerpo del mensaje como extras en el Intent.
+ *
+ * Finalmente, se invoca `Intent.createChooser`, que muestra al usuario un diálogo para que
+ * elija la aplicación con la que desea compartir el contenido. Esto evita que el usuario
+ * establezca una aplicación predeterminada por accidente y le da control sobre a dónde se
+ * envían los datos del pedido en cada ocasión.
+ *
+ * @param context El contexto de la aplicación, necesario para crear y lanzar el Intent.
+ * @param subject El texto que se usará como asunto del mensaje (por ejemplo, en un correo electrónico).
+ * @param summary El cuerpo principal del mensaje, que contiene el resumen del pedido.
+ */
+private fun shareOrder(context: Context, subject: String, summary: String) {
+    // Se crea un Intent con la acción ACTION_SEND para enviar contenido.
+    val intent = Intent(Intent.ACTION_SEND).apply {
+        // Se especifica que el tipo de contenido es texto plano.
+        type = "text/plain"
+        // Se añade el asunto del mensaje.
+        putExtra(Intent.EXTRA_SUBJECT, subject)
+        // Se añade el cuerpo principal del mensaje (el resumen del pedido).
+        putExtra(Intent.EXTRA_TEXT, summary)
+    }
+    // Se inicia una actividad utilizando un selector (chooser).
+    // Esto le permite al usuario elegir a qué aplicación enviar el pedido.
+    context.startActivity(
+        Intent.createChooser(
+            intent,
+            context.getString(R.string.new_cupcake_order)
+        )
+    )
 }
 
 // Metodo para cancelar la orden y restablecer la pantalla inicial
