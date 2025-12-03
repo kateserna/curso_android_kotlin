@@ -63,7 +63,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
+// Vista previa para tamaño Compact
 @Preview(showBackground = true)
 @Composable
 fun ReplyAppCompactPreview() {
@@ -72,6 +72,26 @@ fun ReplyAppCompactPreview() {
             ReplyApp(
                 windowSize = WindowWidthSizeClass.Compact,
             )
+        }
+    }
+}
+//Vista previa para tamaño mediano
+@Preview(showBackground = true, widthDp = 700)
+@Composable
+fun ReplyAppMediumPreview() {
+    ReplyTheme {
+        Surface {
+            ReplyApp(windowSize = WindowWidthSizeClass.Medium)
+        }
+    }
+}
+// Vista previa para tamaño expandido
+@Preview(showBackground = true, widthDp = 1000)
+@Composable
+fun ReplyAppExpandedPreview() {
+    ReplyTheme {
+        Surface {
+            ReplyApp(windowSize = WindowWidthSizeClass.Expanded)
         }
     }
 }
