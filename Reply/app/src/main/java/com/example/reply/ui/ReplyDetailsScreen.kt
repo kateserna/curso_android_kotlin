@@ -48,6 +48,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import com.example.reply.R
@@ -70,6 +71,7 @@ fun ReplyDetailsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .background(color = MaterialTheme.colorScheme.inverseOnSurface)
+                .testTag(stringResource(R.string.details_screen))
                 //.padding(top = dimensionResource(R.dimen.detail_card_list_padding_top))
         ) {
             item {
